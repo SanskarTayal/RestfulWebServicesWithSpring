@@ -1,11 +1,12 @@
 package com.twpracticespring.appws.practiceappws.ui.controller;
-
-
+import com.twpracticespring.appws.practiceappws.ui.model.request.UserDetailsRequestModel;
 import com.twpracticespring.appws.practiceappws.ui.model.respomse.UserRest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("users")
@@ -29,12 +30,18 @@ public class UserController {
     {
         return "Get Users was called with page no "+page+" and limit "+ limit+ " and sortvalue is " +sort;
     }
-    @PostMapping
-    public String createUser()
-    {
-        return "Create user was called";
-    }
+    @PostMapping(consumes =
+            {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+            produces =
+                    {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 
+    public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) {
+        UserRest user = new UserRest();
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
+        user.setEmail(userDetails.getEmail());
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
     @PutMapping
     public String updateUser() {
         return "Update user was called";
