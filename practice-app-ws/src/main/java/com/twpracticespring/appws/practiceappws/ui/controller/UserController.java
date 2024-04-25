@@ -2,31 +2,35 @@ package com.twpracticespring.appws.practiceappws.ui.controller;
 
 import com.twpracticespring.appws.practiceappws.ui.model.request.UserDetailsRequestModel;
 import com.twpracticespring.appws.practiceappws.ui.model.respomse.UserRest;
+import com.twpracticespring.appws.practiceappws.userservice.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.twpractice.app.ws.ui.model.request.UpdateUserDetailsRequestModel;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 @RestController
 @RequestMapping("users")
 
 
 public class UserController {
-    Map<String, UserRest> users;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping(path = "/{userid}", produces = {
             MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_XML_VALUE
     })
     public ResponseEntity<UserRest> getUser(@PathVariable String userid) {
-        if (users.containsKey(userid))
-            return new ResponseEntity<>(users.get(userid), HttpStatus.OK);
+        UserRest fetchedUserDetails = userService.getUser(userid);
+        if (fetchedUserDetails != null)
+            return new ResponseEntity<>(fetchedUserDetails, HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -44,16 +48,8 @@ public class UserController {
                     {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 
     public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) {
-        if (users == null)
-            users = new HashMap<>();
-        UserRest user = new UserRest();
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastName(userDetails.getLastName());
-        user.setEmail(userDetails.getEmail());
-        String userid = UUID.randomUUID().toString();
-        user.setUserID(userid);
-        users.put(userid, user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        UserRest returnValue = userService.createUser(userDetails);
+        return new ResponseEntity<>(returnValue, HttpStatus.OK);
     }
 
     @PutMapping(path = "/{userid}",
@@ -64,15 +60,16 @@ public class UserController {
 
     public ResponseEntity<UserRest> updateUser(@PathVariable String userid,
                                                @RequestBody UpdateUserDetailsRequestModel userDetails) {
-        UserRest user = users.get(userid);
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastName(userDetails.getLastName());
-        return new ResponseEntity<>(users.get(userid), HttpStatus.OK);
-}
+        UserRest updatedUserDetails = userService.updateUser(userid, userDetails);
+        if (updatedUserDetails == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(updatedUserDetails, HttpStatus.OK);
+    }
 
     @DeleteMapping(path = "/{userid}")
     public ResponseEntity<String> deleteUser(@PathVariable String userid) {
-        users.remove(userid);
+        userService.deleteUser(userid);
         return ResponseEntity.noContent().build();
     }
 }
