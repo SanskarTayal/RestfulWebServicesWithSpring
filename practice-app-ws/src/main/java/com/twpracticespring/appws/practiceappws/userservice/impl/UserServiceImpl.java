@@ -2,7 +2,7 @@ package com.twpracticespring.appws.practiceappws.userservice.impl;
 import com.twpractice.app.ws.ui.model.request.UpdateUserDetailsRequestModel;
 import com.twpracticespring.appws.practiceappws.shared.Utils;
 import com.twpracticespring.appws.practiceappws.ui.model.request.UserDetailsRequestModel;
-import com.twpracticespring.appws.practiceappws.ui.model.respomse.UserRest;
+import com.twpracticespring.appws.practiceappws.ui.model.response.UserRest;
 import com.twpracticespring.appws.practiceappws.userservice.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,13 +14,8 @@ import java.util.Map;
 public class UserServiceImpl implements UserService {
 
     private Map<String, UserRest> users;
-
-    private final Utils utils;
-
     @Autowired
-    public UserServiceImpl(Utils utils) {
-        this.utils = utils;
-    }
+    private Utils utils;
 
     @Override
     public UserRest getUser(String id) {
@@ -58,7 +53,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String userId) {
-        users.remove(userId);
+    public boolean deleteUser(String userId) {
+        if(users==null)
+            return false;
+        else if(users.containsKey(userId)) {
+            users.remove(userId);
+            return true;
+        }
+        else return false;
     }
 }

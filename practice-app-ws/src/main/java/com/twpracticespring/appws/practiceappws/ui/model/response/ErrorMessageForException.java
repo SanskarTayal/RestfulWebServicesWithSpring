@@ -1,11 +1,10 @@
-package com.twpracticespring.appws.practiceappws.ui.model.respomse;
+package com.twpracticespring.appws.practiceappws.ui.model.response;
 
 import java.util.Date;
 
 public class ErrorMessageForException {
     Date timestamp;
     String message;
-    public ErrorMessageForException(){}
 
     public ErrorMessageForException(Date timestamp, String message) {
         this.timestamp = timestamp;

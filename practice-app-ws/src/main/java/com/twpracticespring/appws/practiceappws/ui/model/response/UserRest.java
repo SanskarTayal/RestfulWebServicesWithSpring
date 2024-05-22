@@ -1,4 +1,4 @@
-package com.twpracticespring.appws.practiceappws.ui.model.respomse;
+package com.twpracticespring.appws.practiceappws.ui.model.response;
 
 public class UserRest {
     private String firstName, LastName, Email, userID;

@@ -1,7 +1,7 @@
 package com.twpracticespring.appws.practiceappws.ui.controller;
 
 import com.twpracticespring.appws.practiceappws.ui.model.request.UserDetailsRequestModel;
-import com.twpracticespring.appws.practiceappws.ui.model.respomse.UserRest;
+import com.twpracticespring.appws.practiceappws.ui.model.response.UserRest;
 import com.twpracticespring.appws.practiceappws.userservice.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +16,9 @@ import com.twpractice.app.ws.ui.model.request.UpdateUserDetailsRequestModel;
 
 
 public class UserController {
-    private final UserService userService;
-
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
+
 
     @GetMapping(path = "/{userid}", produces = {
             MediaType.APPLICATION_JSON_VALUE,
@@ -32,7 +29,7 @@ public class UserController {
         if (fetchedUserDetails != null)
             return new ResponseEntity<>(fetchedUserDetails, HttpStatus.OK);
         else
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping()
@@ -69,8 +66,11 @@ public class UserController {
 
     @DeleteMapping(path = "/{userid}")
     public ResponseEntity<String> deleteUser(@PathVariable String userid) {
-        userService.deleteUser(userid);
-        return ResponseEntity.noContent().build();
+        if (userService.deleteUser(userid))
+            return ResponseEntity.ok().build();
+        else
+            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
+
     }
 }
 

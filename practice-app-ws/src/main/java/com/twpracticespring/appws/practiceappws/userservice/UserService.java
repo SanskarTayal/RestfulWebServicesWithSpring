@@ -2,7 +2,7 @@ package com.twpracticespring.appws.practiceappws.userservice;
 
 import com.twpractice.app.ws.ui.model.request.UpdateUserDetailsRequestModel;
 import com.twpracticespring.appws.practiceappws.ui.model.request.UserDetailsRequestModel;
-import com.twpracticespring.appws.practiceappws.ui.model.respomse.UserRest;
+import com.twpracticespring.appws.practiceappws.ui.model.response.UserRest;
 
 
 public interface UserService {
@@ -12,6 +12,6 @@ public interface UserService {
 
     UserRest updateUser(String userId, UpdateUserDetailsRequestModel userDetails);
 
-    void deleteUser(String userId);
+    boolean deleteUser(String userId);
 }
 

@@ -28,3 +28,7 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+test {
+    // Include patterns for test classes
+    include '**/*Test.class' // Include all classes ending with 'Test'
+}
